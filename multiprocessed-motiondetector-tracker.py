@@ -88,55 +88,6 @@ def CameraProcess(pipe):
 
 
 def AlgorithmProcess(pipe, mainPipe):
-    def argus_tracker(tracker_roi=None):
-        if tracker_roi is not None:
-            cv2.destroyWindow("Detector")
-            tracking = False
-            track_delta_time = 0
-            roi_stuck_tester = tracker_roi
-            while True:
-                track_timer_start = timeit.default_timer()
-                pipe.send(PROCESS_READY)
-                frame = pipe.recv()
-
-                if frame == PROCESS_SHUTDOWN:
-                    mainPipe.send(PROCESS_SHUTDOWN)
-                    break
-
-                pipe.send(PROCESS_BUSY)
-                if not tracking:
-                    tracker = cv2.TrackerCSRT_create()
-                    tracking = tracker.init(frame, tracker_roi)
-                updated, tracker_roi = tracker.update(frame)
-                
-                if tracking and updated:
-                    roi_p1 = (int(tracker_roi[0]), int(tracker_roi[1]))
-                    roi_p2 = (int(tracker_roi[0] + tracker_roi[2]), int(tracker_roi[1] + tracker_roi[3]))
-                    roi_center = (int(roi_p1[0]+(roi_p2[0]-roi_p1[0])/2), int(roi_p1[1]+(roi_p2[1]-roi_p1[1])/2))
-                    cv2.circle(frame, roi_center,5, (0, 0, 255), -1)
-
-                    ui.tracker_gui(frame, roi_p1, roi_p2)
-
-                    cv2.imshow("Tracker", frame)
-                else:
-                    cv2.destroyWindow("Tracker")
-                    break
-
-                track_timer_end = timeit.default_timer()
-                track_delta_time += (track_timer_end - track_timer_start)
-                if track_delta_time >= max_tracking_stuck_time:  # stops tracking if no movement after this time
-                    track_delta_time = 0
-                    if int(abs(tracker_roi[0] - roi_stuck_tester[0])) < 20 and int(abs(tracker_roi[1] - roi_stuck_tester[1])) < 20:
-                        cv2.destroyWindow("Tracker")
-                        print("ROI stuck detected")
-                        break
-                    else:
-                        roi_stuck_tester = tracker_roi
-
-                if cv2.waitKey(1) & 0xFF == 27:
-                    mainPipe.send(PROCESS_SHUTDOWN)
-                    break
-    
     
     while True:
         starttime = timeit.default_timer()
@@ -163,9 +114,6 @@ def AlgorithmProcess(pipe, mainPipe):
         # running series of algorithms
         TargetROI, ROI_List, object_size, dist_frame = detector.detection_handler(frame1, frame2, sampleresolution, samplesensitivity, minimum_treshhold, min_detect_size)
 
-        # initializing tracker with the largest ROI (marked is TargetROI)
-        argus_tracker(TargetROI)
-
         # Anything below this line (in the function) is solely for visualization.
         NumObjectsDetected = len(ROI_List)
 
@@ -180,7 +128,7 @@ def AlgorithmProcess(pipe, mainPipe):
         frame_out = ui.detection_gui(frame2, sampleresolution, NumObjectsDetected, object_size, ROI_List, timepass, (rows, cols), bg_detect_sensitivity)
 
         cv2.imshow("Detector", frame_out)
-        
+
         if cv2.waitKey(1) & 0xFF == 27:
             mainPipe.send(PROCESS_SHUTDOWN)
             print("Algorithm Processor: EXIT REQUEST")
