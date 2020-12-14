@@ -33,8 +33,11 @@ the tracker follows the target, if the tracker is 'lost' and gets stuck on the s
 automatically to the motion detector - amount of wait in seconds is configured by user.
 
 # Samples
-### Motion Detector
-![Motion detector](https://media.giphy.com/media/nsb0bGzHAXmGpNyQob/giphy.gif)
+### Motion Detector -- the motion detector marks the largest motion object with green ROI and [TARGET] mark
+![Motion Detector](https://media.giphy.com/media/ZFrtHlqJ4FgnuIcI3l/giphy.gif)
 
-### Tracker
-![Motion detector](https://media.giphy.com/media/ET5BM50AUa4J2kHaKx/giphy.gif)
+### Tracker -- the motion detector picked a target and initiated the tarcker right away.
+![Motion Tracker](https://media.giphy.com/media/ET5BM50AUa4J2kHaKx/giphy.gif)
+
+### Motion Detector + Tracker (With background motion detection)
+![Motion Detector & Tracker](https://imgur.com/a/uzha8IT)
