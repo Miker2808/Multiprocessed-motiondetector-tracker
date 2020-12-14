@@ -40,4 +40,6 @@ automatically to the motion detector - amount of wait in seconds is configured b
 ![Motion Tracker](https://media.giphy.com/media/ET5BM50AUa4J2kHaKx/giphy.gif)
 
 ### Motion Detector + Tracker (With background motion detection)
-![Motion Detector & Tracker](https://imgur.com/a/uzha8IT)
+```html
+<blockquote class="imgur-embed-pub" lang="en" data-id="a/uzha8IT" data-context="false" ><a href="//imgur.com/a/uzha8IT"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+```
