@@ -34,11 +34,8 @@ automatically to the motion detector - amount of wait in seconds is configured b
 
 # Samples
 ### Motion Detector -- the motion detector marks the largest motion object with green ROI and [TARGET] mark
-![Motion Detector](https://media.giphy.com/media/ZFrtHlqJ4FgnuIcI3l/giphy.gif)
+![Motion Detector](https://i.imgur.com/gKy9Hn9.gif)
 
 ### Tracker -- the motion detector picked a target and initiated the tarcker right away.
 ![Motion Tracker](https://media.giphy.com/media/ET5BM50AUa4J2kHaKx/giphy.gif)
-
-### Motion Detector + Tracker (With background motion detection)
-![Motion Detector & Tracker](https://i.imgur.com/okTs6lg.gif)
 
