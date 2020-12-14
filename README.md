@@ -31,3 +31,10 @@ and it starts to track the largest ROI it got.
 To avoid noise, it ignores too large or too small blocks - dependent on user configured parameters.
 the tracker follows the target, if the tracker is 'lost' and gets stuck on the same position, it stops and returns
 automatically to the motion detector - amount of wait in seconds is configured by user.
+
+# Samples
+### Motion Detector
+![Motion detector](https://media.giphy.com/media/nsb0bGzHAXmGpNyQob/giphy.gif)
+
+### Tracker
+![Motion detector](https://media.giphy.com/media/ET5BM50AUa4J2kHaKx/giphy.gif)
