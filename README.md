@@ -5,7 +5,7 @@
 # requirements
 ```bash
 Opencv >= 4.4.0.0 (recommended with 'pip3 install opencv-contrib-python')
-numpy >= 1.19.0
+numpy >= 1.18.0
 python >= 3.6
 ```
 # Installation & Use
@@ -18,19 +18,21 @@ examplevideo = '' # to your video path, or otherwise an IP to your stream
 simply run the script.
 
 # How does it work?
-The algorithm runs on multiple layers, at top, it is multiprocessed using 3 processes
-first process, is the CameraProcess fuction, handling the video buffer and sending the frames
+The algorithm runs on multiple layers, on top, it is multiprocessed using 3 processes.
+The first process, called CameraProcess, is a function responsible for handling the video buffer and sending the frames
 to the second process, called the AlgorithmProcess, it handles the motion detector and the tracker.
 
-The motion detector uses the background subtraction method for detection, therefore its weakness is moving cameras.
-the motion detector scans sectors or 'blocks' if from the subtraction it sensed motion, it appends it.
-after scanning the whole frame differance, it connects the close blocks into one block, with the size proportional
-to the connected blocks. This process generates a list of ROIs, then, the algorithm sends the largest ROI to the tracker
-and it starts to track the largest ROI it got.
-
-To avoid noise, it ignores too large or too small blocks - dependent on user configured parameters.
-the tracker follows the target, if the tracker is 'lost' and gets stuck on the same position, it stops and returns
-automatically to the motion detector - amount of wait in seconds is configured by user.
+The motion detector uses the background subtraction algorithm for detection, therefore it's weakness is moving cameras.
+The motion detector scans sectors also know as 'blocks' from the subtracted images, like a "delta" image. if the scan senses motion,
+which is represented in the subtracted image output as white colored area, it appends it.
+Once the scan is complete, the algorithm connects the "blocks" using standard opencv method, which outputs a block with size proportional 
+to the connected blocks, in averaged out area. The process continues until all blocks are connected or removed if they are too small
+(This can be changed by tweaking the parameters).
+The output of this process will be a list of ROIs (Region On Interests) as a (X,Y,W,H) tuples list.
+The largest ROI is sent to the tracker to initiate tracking on the object in the ROI.
+Once the tracker is initiated successfully it will either follow the moving object, or freeze on the same place.
+To avert losing the target and locking on the background, the tracker is stopped after N seconds of motionlessness.
+The number of seconds to wait (N) can be tweaked by user
 
 # Samples
 ### Motion Detector -- the motion detector marks the largest motion object with green ROI and [TARGET] mark
