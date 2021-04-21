@@ -1,6 +1,12 @@
 import cv2
 import numpy as np
+from numpy.lib.function_base import diff
 
+# for gpu function
+import torch
+from torch import cuda
+from torch._C import device, dtype
+import torchvision
 
 # takes list of rectangles and returns the largest target
 def largest_target(inputList, sizeList):
@@ -47,7 +53,22 @@ def largest_ROI(inputList, sizeList, sample_res = 6, min_size = 10):
                     return ROI
     return None  # return None if no largest target was found, allows the algorithm to know to just skip it instead of causing errors
 
+def dist_map_gpu(frame1, frame2):
+    frame1_t = torch.from_numpy(frame1)
+    frame1_t = frame1_t.to('cuda') 
+    frame1_t_32 = frame1_t.type(torch.float32)  
+    frame2_t = frame2_t.type(torch.float32)  
+    frame2_t = torch.from_numpy(frame2)
+    frame2_t_32 = frame2_t.to('cuda')
+    diff32 = (frame1_t_32 - frame2_t_32)
+    norm32 = torch.sqrt(diff32[:, :, 0]**2 + diff32[:, :, 1]**2 + diff32[:, :, 2]**2)/441.67295593
+    dist = norm32 * 255
+    dist = dist.type(torch.uint8)
+    dist = dist.to('cpu')
+    dist = dist.numpy()
+    return dist
 
+    
 def dist_map(frame1, frame2):
     """
     outputs pythagorean distance between two frames
@@ -58,7 +79,7 @@ def dist_map(frame1, frame2):
     frame1_32 = np.float32(frame1)
     frame2_32 = np.float32(frame2)
     diff32 = frame1_32 - frame2_32
-    norm32 = np.sqrt(diff32[:, :, 0]**2 + diff32[:, :, 1]**2 + diff32[:, :, 2]**2)/np.sqrt(255**2 + 255**2 + 255**2)
+    norm32 = np.sqrt(diff32[:, :, 0]**2 + diff32[:, :, 1]**2 + diff32[:, :, 2]**2)/441.67295593
     dist = np.uint8(norm32*255)
     return dist
 
@@ -85,7 +106,7 @@ def white_probe(image, sample_res = 24, sensitivity = 20):
 
 
 def detection_handler(frame1, frame2, sample_res, sample_sens, minimum_threshold, min_detect_size):
-    dist_frame = dist_map(frame1, frame2)
+    dist_frame = dist_map_gpu(frame1, frame2)
     blur_frame = cv2.GaussianBlur(dist_frame, (9, 9), 0)
     _, thresh_frame = cv2.threshold(blur_frame, minimum_threshold, 255, 0)
     thresh_roi = white_probe(thresh_frame, sample_res, sample_sens)

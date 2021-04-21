@@ -41,20 +41,22 @@ import cv2
 import timeit
 import multiprocessing
 import sys
+import time
 
 import library.user_interface as ui
 import library.detector as detector
 import library.utility as utility
 
-examplevideo = "samplevideo.mp4"
+examplevideo = "75m.mp4"
 
-sampleresolution = 6  # Number of pixel to take into calculation per block
-samplesensitivity = 50  # Average white value in block (greyscale of each pixel divided by number of pixels), (full white block will return value of 255)
-minimum_treshhold = 50 # Threshholds the distance frame to specified-255 (any value under specified value is discarded (back to 0))
+sampleresolution = 3  # Number of pixel to take into calculation per block
+samplesensitivity = 25  # Average white value in block (greyscale of each pixel divided by number of pixels), (full white block will return value of 255)
+minimum_treshhold = 10 # Threshholds the distance frame to specified-255 (any value under specified value is discarded (back to 0))
 min_detect_size = 15 # minimum size of the ROI to not be discarded, too large will discards any motion, too small will include too sensitive motion.
 max_tracking_stuck_time = 1 # if tracker is stuck wait up to 3 seconds before returning to motion detector
 bg_detect_sensitivity = 5 # level of motion required to trigger background detection warning (lower means less sensitive)
-frame_resolution = (680, 480)
+#frame_resolution = (680, 480)
+frame_resolution = (1280, 720)
 
 PROCESS_READY = (1, 1) 
 PROCESS_BUSY = (2, 2)
